@@ -1,5 +1,10 @@
 #include <iostream>
 
+struct point2d {
+    double x;
+    double y;
+};
+
 int main() {
     std::cout << "Hello and welcome to "  << "!\n";
 
