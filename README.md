@@ -1,7 +1,14 @@
-#Building from source:
+# Building from source:
+
 PREREQUISITES:
-glew and glfw3 installed on system, cmake, make ...
-in spinner/
-'''
+
+libglew-dev, lib-glfw3, cmake, make...  installed on system
+
+
+TARGET:
+currently only linux :)
+
+in spinner, run the following command to build
+```
 ./run.sh
-'''
+```
