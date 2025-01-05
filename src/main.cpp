@@ -1,36 +1,53 @@
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <stdio.h>
+// #include <iostream>
+// #include <thread>
 
-int main(void)
+void glfwHints(){
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+    glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
+    glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
+}
+
+
+
+int main()
 {
-    GLFWwindow* window;
+    if(!glfwInit()) return -1;
 
-    /* Initialize the library */
-    if (!glfwInit())
-        return -1;
+    glfwHints();
 
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
+    GLFWwindow* window = glfwCreateWindow(1200, 700, "OpenGL", nullptr, nullptr);
+    // GLFWwindow* window = glfwCreateWindow(1200, 700, "OpenGL", glfwGetPrimaryMonitor(), nullptr);
 
-    /* Make the window's context current */
+    if(!window) return -1;
+
     glfwMakeContextCurrent(window);
 
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
-    {
-        /* Render here */
+    glewExperimental = true;
+    // if (!glewInit()) return -1;
+    glewInit();
+
+    GLuint vertexBuffer;
+    glGenBuffers(1, &vertexBuffer);
+    printf("%u\n", vertexBuffer);
+
+    while(!glfwWindowShouldClose(window)){
         glClear(GL_COLOR_BUFFER_BIT);
-
-        /* Swap front and back buffers */
         glfwSwapBuffers(window);
-
-        /* Poll for and process events */
         glfwPollEvents();
+        if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS){
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
     }
+
+
+    // std::this_thread::sleep_for(std::chrono::seconds(10));
 
     glfwTerminate();
     return 0;

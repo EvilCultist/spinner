@@ -13,10 +13,12 @@ find_package(GLEW REQUIRED)
 if(glfw3_FOUND)
     target_link_libraries(spinner glfw)
 endif()
+
 if(OpenGL_FOUND)
     target_link_libraries(spinner OpenGL::GL)
     # link_libraries(OpenGL::GL)
 endif()
+
 if(GLEW_FOUND)
     target_link_libraries(spinner GLEW::GLEW)
 endif()
