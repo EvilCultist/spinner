@@ -30,8 +30,8 @@ int main()
     glfwMakeContextCurrent(window);
 
     glewExperimental = true;
-    // if (!glewInit()) return -1;
-    glewInit();
+    if (glewInit() != GLEW_OK) return -1;
+    printf("glewInit - %u\n", glewInit());
 
     GLuint vertexBuffer;
     glGenBuffers(1, &vertexBuffer);
