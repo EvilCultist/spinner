@@ -31,11 +31,11 @@ int main()
 
     glewExperimental = true;
     if (glewInit() != GLEW_OK) return -1;
-    printf("glewInit - %u\n", glewInit());
+    // printf("glewInit - %u\n", glewInit());
 
     GLuint vertexBuffer;
     glGenBuffers(1, &vertexBuffer);
-    printf("%u\n", vertexBuffer);
+    // printf("%u\n", vertexBuffer);
 
     while(!glfwWindowShouldClose(window)){
         glClear(GL_COLOR_BUFFER_BIT);
