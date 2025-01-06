@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <stdio.h>
+#include <filesystem>
 // #include <iostream>
 // #include <thread>
 
@@ -17,27 +18,26 @@ void glfwHints() {
   glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API);
 }
 
-const char *getShaderByPath(char *path) {
-  FILE *fp;
-  long size = 0;
-  char *shaderContent;
+// const char* readFile(const std::string& filePath) {
+std::string readFile(const std::string& filePath) {
 
-  /* Read File to get size */
-  fp = fopen(path, "rb");
-  if (fp == NULL) {
-    return "";
-  }
-  fseek(fp, 0L, SEEK_END);
-  size = ftell(fp) + 1;
-  fclose(fp);
+    std::ifstream file(filePath);
 
-  /* Read File for Content */
-  fp = fopen(path, "r");
-  // shaderContent = memset(std::malloc(size), '\0', size);
-  // fread(shaderContent, 1, size-1, fp);
-  // fclose(fp);
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file at " << filePath << std::endl;
+        return "";
+    }
 
-  return shaderContent;
+    std::string temp="";
+    std::string buffer="";
+    while (getline(file, temp))
+      buffer += temp + '\n';
+    // while (getline(vertex_s, temp))
+    //     vertexSource += temp + '\n';
+    file.close();
+    // std::cout << buffer << std::endl;
+
+    return buffer;
 }
 
 int main() {
@@ -67,18 +67,20 @@ int main() {
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
   // printf("%u\n", vbo);
-  std::ifstream vertex_s("shaders/triangle.vert");
-  // vertex_s.open("src/shaders/triangle.vert");
-  if (!vertex_s.is_open()) {
-    std::cout << "file not open" << std::endl;
-    return -1;
+  // std::cout << readFile("src/shaders/triangle.vert") << std::endl;
+  std::string vertexSourceString = readFile("src/shaders/triangle.vert");
+  const char* vertexSource = vertexSourceString.c_str();
+  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+  glShaderSource(vertexShader, 1, &vertexSource, NULL);
+  glCompileShader(vertexShader);
+  GLint status;
+  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &status);
+  if( status != GL_TRUE){
+      std::cerr << "vertex shader failed to compile" << std::endl;
+      char buffer[512];
+      glGetShaderInfoLog(vertexShader, 512, NULL, buffer);
+      return -1;
   }
-  std::string temp;
-  std::string vertexSource = "";
-  while (getline(vertex_s, temp))
-    vertexSource += temp + '\n';
-  vertex_s.close();
-  printf("shader src - %s\n", vertexSource.c_str());
 
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
