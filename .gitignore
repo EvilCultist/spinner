@@ -8,7 +8,7 @@
 
 .idea
 build/
-#.cache
+.cache
 
 
 
