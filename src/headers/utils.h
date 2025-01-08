@@ -1,8 +1,6 @@
 #pragma once
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
-#include <cstring>
-#include <fstream>
 #include <iostream>
 
 namespace utils {

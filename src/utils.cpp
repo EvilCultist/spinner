@@ -1,4 +1,5 @@
 #include "utils.h"
+#include <fstream>
 
 void utils::glfwHints() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

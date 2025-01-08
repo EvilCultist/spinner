@@ -1,13 +1,7 @@
 #include <GL/glew.h>
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
-#include <cstring>
-#include <filesystem>
-#include <iostream>
-#include <stdio.h>
 #include <utils.h>
-// #include <iostream>
-// #include <thread>
 
 int main() {
   if (!glfwInit())
