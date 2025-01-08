@@ -14,6 +14,12 @@ set_target_properties(spinner PROPERTIES
 target_sources(spinner
     PUBLIC
     src/main.cpp
+    src/utils.cpp
+)
+
+target_include_directories(spinner
+    PUBLIC
+    src/headers
 )
 
 find_package(OpenGL REQUIRED)
