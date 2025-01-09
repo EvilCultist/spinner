@@ -11,5 +11,4 @@ currently only linux :)
 in spinner, run the following command to build
 ```
 ./run.sh
-./spinner
 ```
