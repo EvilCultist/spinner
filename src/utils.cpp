@@ -1,5 +1,15 @@
 #include "utils.h"
+#include <chrono>
 #include <fstream>
+
+utils::Timer::Timer() {
+  auto start = std::chrono::high_resolution_clock::now();
+}
+float utils::Timer::now() {
+  auto end = std::chrono::high_resolution_clock::now();
+  return std::chrono::duration_cast<std::chrono::duration<float>>(end - start)
+      .count();
+}
 
 void utils::glfwHints() {
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);

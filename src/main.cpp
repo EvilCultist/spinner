@@ -1,6 +1,9 @@
 #include <GL/glew.h>
+#include <chrono>
+#include <ios>
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
+#include <cmath>
 #include <utils.h>
 
 int main() {
@@ -72,8 +75,15 @@ int main() {
   glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(posAttrib);
 
+  auto timer = new utils::Timer();
+
   while (!glfwWindowShouldClose(window)) {
     glClear(GL_COLOR_BUFFER_BIT);
+
+    GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
+
+    float time = timer->now();
+    glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
 
     glUseProgram(shaderProgram);
 
