@@ -23,13 +23,26 @@ int main() {
   if (glewInit() != GLEW_OK)
     return -1;
 
-  float vertices[] = {0.0f, 0.5f, 1.0f,  1.0f,  1.0f, 0.5f, -0.5f, 0.5f,
-                      0.5f, 0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f};
+  float vertices[] = {0.0f, 0.5f,  1.0f, 0.0f,  0.0f,  0.5f, -0.5f,
+                      0.0f, 1.0f,  0.0f, -0.5f, -0.5f, 0.0f, 0.0f,
+                      1.0f, -1.0f, 0.5f, 0.0f,  0.0f,  0.0f};
+
+  GLuint elements[] = {0, 1, 2, 2, 3, 0};
+
+  GLuint vao;
+  glGenVertexArrays(1, &vao);
+  glBindVertexArray(vao);
 
   GLuint vbo;
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+  GLuint ebo;
+  glGenBuffers(1, &ebo);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements,
+               GL_STATIC_DRAW);
 
   std::string vertexSourceString = utils::readFile("src/shaders/triangle.vert");
   const char *vertexSource = vertexSourceString.c_str();
@@ -69,9 +82,6 @@ int main() {
   glBindFragDataLocation(shaderProgram, 0, "outColor");
   glLinkProgram(shaderProgram);
 
-  GLuint vao;
-  glGenVertexArrays(1, &vao);
-  glBindVertexArray(vao);
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
   glEnableVertexAttribArray(posAttrib);
   glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
@@ -84,6 +94,7 @@ int main() {
   auto timer = new utils::Timer();
 
   while (!glfwWindowShouldClose(window)) {
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
     GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
@@ -95,7 +106,9 @@ int main() {
 
     glBindVertexArray(vao);
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    // glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
     glfwSwapBuffers(window);
     glfwPollEvents();
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
