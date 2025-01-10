@@ -23,8 +23,8 @@ int main() {
   if (glewInit() != GLEW_OK)
     return -1;
 
-  float vertices[] = {0.0f, 0.5f, 1.0f,  0.0f,  0.0f, 0.5f, -0.5f, 0.0f,
-                      1.0f, 0.0f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f};
+  float vertices[] = {0.0f, 0.5f, 1.0f,  1.0f,  1.0f, 0.5f, -0.5f, 0.5f,
+                      0.5f, 0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 0.0f};
 
   GLuint vbo;
   glGenBuffers(1, &vbo);
