@@ -23,7 +23,8 @@ int main() {
   if (glewInit() != GLEW_OK)
     return -1;
 
-  float vertices[] = {0.0f, 0.5f, 0.5f, -0.5f, -0.5f, -0.5f};
+  float vertices[] = {0.0f, 0.5f, 1.0f,  0.0f,  0.0f, 0.5f, -0.5f, 0.0f,
+                      1.0f, 0.0f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f};
 
   GLuint vbo;
   glGenBuffers(1, &vbo);
@@ -72,8 +73,13 @@ int main() {
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
   glEnableVertexAttribArray(posAttrib);
+  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+
+  GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
+  glEnableVertexAttribArray(colAttrib);
+  glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+                        (void *)(2 * sizeof(float)));
 
   auto timer = new utils::Timer();
 

@@ -5,6 +5,7 @@
 utils::Timer::Timer() {
   auto start = std::chrono::high_resolution_clock::now();
 }
+// has some issue, returns a constant
 float utils::Timer::now() {
   auto end = std::chrono::high_resolution_clock::now();
   return std::chrono::duration_cast<std::chrono::duration<float>>(end - start)
