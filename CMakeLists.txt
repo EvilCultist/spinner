@@ -28,6 +28,7 @@ find_package(glfw3 REQUIRED)
 find_package(GLEW REQUIRED)
 
 find_library(SOIL2 soil2-debug)
+# find_library(SOIL_LIBRARY soil-debug)
 
 
 if(glfw3_FOUND)
@@ -42,3 +43,5 @@ endif()
 if(GLEW_FOUND)
     target_link_libraries(spinner GLEW::GLEW)
 endif()
+
+target_link_libraries(spinner SOIL)

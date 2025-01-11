@@ -1,5 +1,9 @@
 #include "utils.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <SOIL/SOIL.h>
 #include <chrono>
+#include <cstddef>
 #include <fstream>
 
 utils::Timer::Timer() {
@@ -43,3 +47,52 @@ std::string utils::readFile(const std::string &filePath) {
 
   return buffer;
 }
+
+void utils::getImage(std::string filePath) {
+  int width, height;
+  // unsigned char *image = {};
+  // return image;
+  unsigned char *image =
+      SOIL_load_image(filePath.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+               GL_UNSIGNED_BYTE, image);
+  // settings functions
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  // GLfloat textureBackground[] = {1.0f, 1.0f, 1.0f, 0.0f};
+  // glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR,
+  // textureBackground);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  // GLfloat pixels[] = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+  //                     0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);
+  // import texture before this
+  glGenerateMipmap(GL_TEXTURE_2D);
+  SOIL_free_image_data(image);
+}
+
+// void utils::removeImage(unsigned char *image) {}
+
+// void utils::mkImage(const std::string &filepath) {
+//   // wait for it
+//   auto image = getImage(filepath);
+//   GLuint tex;
+//   glGenTextures(1, &tex);
+//   glBindTexture(GL_TEXTURE_2D, tex);
+//   // settings functions
+//   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+//   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+//   GLfloat textureBackground[] = {1.0f, 0.5f, 1.0f, 0.0f};
+//   glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR,
+//   textureBackground); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
+//   GL_NEAREST); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
+//   GL_LINEAR); GLfloat pixels[] = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+//                       0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};
+//   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);
+//   // import texture before this
+//   glGenerateMipmap(GL_TEXTURE_2D);
+//   removeImage(image);
+// }

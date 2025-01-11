@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
+#include <string>
 #define GLFW_DLL
-#include <GLFW/glfw3.h>
 #include <iostream>
 
 namespace utils {
@@ -15,4 +15,7 @@ private:
 };
 void glfwHints();
 std::string readFile(const std::string &filepath);
+void getImage(std::string filePath);
+// void removeImage(unsigned char *image);
+// void mkImage(const std::string &filepath);
 } // namespace utils

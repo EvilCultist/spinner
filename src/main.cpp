@@ -12,7 +12,7 @@ int main() {
 
   utils::glfwHints();
 
-  GLFWwindow *window = glfwCreateWindow(1200, 700, "OpenGL", nullptr, nullptr);
+  GLFWwindow *window = glfwCreateWindow(2200, 1200, "OpenGL", nullptr, nullptr);
 
   if (!window)
     return -1;
@@ -23,27 +23,18 @@ int main() {
   if (glewInit() != GLEW_OK)
     return -1;
 
-  float vertices[] = {0.0f, 0.5f,  1.0f, 0.0f,  0.0f,  0.5f, -0.5f,
-                      0.0f, 1.0f,  0.0f, -0.5f, -0.5f, 0.0f, 0.0f,
-                      1.0f, -1.0f, 0.5f, 0.0f,  0.0f,  0.0f};
+  // float vertices[] = {0.0f, 0.5f,  1.0f, 0.0f,  0.0f,  0.5f, -0.5f,
+  //                     0.0f, 1.0f,  0.0f, -0.5f, -0.5f, 0.0f, 0.0f,
+  //                     1.0f, -1.0f, 0.5f, 0.0f,  0.0f,  0.0f};
+  float vertices[] = {
+      //  Position   Color            Texcoords
+      -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
+      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
+      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+      -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
+  };
 
   GLuint elements[] = {0, 1, 2, 2, 3, 0};
-
-  GLuint tex;
-  glGenTextures(1, &tex);
-  glBindTexture(GL_TEXTURE_2D, tex);
-  // settings functions
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-  GLfloat textureBackground[] = {1.0f, 0.5f, 1.0f, 0.0f};
-  glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, textureBackground);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  GLfloat pixels[] = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-                      0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);
-  // import texture before this
-  glGenerateMipmap(GL_TEXTURE_2D);
 
   GLuint vao;
   glGenVertexArrays(1, &vao);
@@ -97,26 +88,39 @@ int main() {
 
   glBindFragDataLocation(shaderProgram, 0, "outColor");
   glLinkProgram(shaderProgram);
+  glUseProgram(shaderProgram);
 
   GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
   glEnableVertexAttribArray(posAttrib);
-  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), 0);
+  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
 
   GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
   glEnableVertexAttribArray(colAttrib);
-  glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float),
+  glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                         (void *)(2 * sizeof(float)));
 
-  auto timer = new utils::Timer();
+  GLint texAttrib = glGetAttribLocation(shaderProgram, "color");
+  glEnableVertexAttribArray(texAttrib);
+  glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+                        (void *)(5 * sizeof(float)));
+
+  GLuint tex;
+  glGenTextures(1, &tex);
+  glBindTexture(GL_TEXTURE_2D, tex);
+
+  // auto image = utils::getImage("res/spinner.png");
+  utils::getImage("res/spinner.png");
+
+  // auto timer = new utils::Timer();
 
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
+    // GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
 
-    float time = timer->now();
-    glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
+    // float time = timer->now();
+    // glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
 
     glUseProgram(shaderProgram);
 
@@ -131,6 +135,19 @@ int main() {
       glfwSetWindowShouldClose(window, GL_TRUE);
     }
   }
+
+  glDeleteTextures(1, &tex);
+
+  glDeleteProgram(shaderProgram);
+  glDeleteProgram(fragmentShader);
+  glDeleteProgram(vertexShader);
+
+  glDeleteBuffers(1, &ebo);
+  glDeleteBuffers(1, &vbo);
+
+  glDeleteVertexArrays(1, &vao);
+
+  // utils::removeImage(image);
 
   // std::this_thread::sleep_for(std::chrono::seconds(10));
 
