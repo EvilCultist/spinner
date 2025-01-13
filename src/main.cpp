@@ -3,8 +3,14 @@
 #include <ios>
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
+#include <SOIL/SOIL.h>
 #include <cmath>
 #include <utils.h>
+
+// #define WINDOW_HEIGHT 1200
+#define WINDOW_HEIGHT 600
+// #define WINDOW_WIDTH 2200
+#define WINDOW_WIDTH 600
 
 int main() {
   if (!glfwInit())
@@ -12,7 +18,8 @@ int main() {
 
   utils::glfwHints();
 
-  GLFWwindow *window = glfwCreateWindow(2200, 1200, "OpenGL", nullptr, nullptr);
+  GLFWwindow *window =
+      glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "OpenGL", nullptr, nullptr);
 
   if (!window)
     return -1;
@@ -99,18 +106,36 @@ int main() {
   glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                         (void *)(2 * sizeof(float)));
 
-  GLint texAttrib = glGetAttribLocation(shaderProgram, "color");
+  GLint texAttrib = glGetAttribLocation(shaderProgram, "texCord");
   glEnableVertexAttribArray(texAttrib);
   glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                         (void *)(5 * sizeof(float)));
 
   GLuint tex;
   glGenTextures(1, &tex);
+  glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, tex);
 
   // auto image = utils::getImage("res/spinner.png");
-  utils::getImage("res/spinner.png");
+  // utils::getImage("res/spinner.png");
 
+  int width, height;
+  unsigned char *image =
+      // SOIL_load_image("res/spinner.png", &width, &height, 0, SOIL_LOAD_RGBA);
+      SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGBA);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA,
+               GL_UNSIGNED_BYTE, image);
+  // for (int i = 0; i <= 300; i++) {
+  //   std::cout << image[i];
+  // }
+  // std::cout << std::endl;
+  SOIL_free_image_data(image);
+  glUniform1i(glGetUniformLocation(shaderProgram, "tex"), 0);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   // auto timer = new utils::Timer();
 
   while (!glfwWindowShouldClose(window)) {
@@ -121,6 +146,7 @@ int main() {
 
     // float time = timer->now();
     // glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
+    glBindTexture(GL_TEXTURE_2D, tex);
 
     glUseProgram(shaderProgram);
 
