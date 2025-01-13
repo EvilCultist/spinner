@@ -8,9 +8,9 @@
 #include <utils.h>
 
 // #define WINDOW_HEIGHT 1200
-#define WINDOW_HEIGHT 600
+#define WINDOW_HEIGHT 1200
 // #define WINDOW_WIDTH 2200
-#define WINDOW_WIDTH 600
+#define WINDOW_WIDTH 1200
 
 int main() {
   if (!glfwInit())
@@ -31,17 +31,19 @@ int main() {
     return -1;
 
   // float vertices[] = {0.0f, 0.5f,  1.0f, 0.0f,  0.0f,  0.5f, -0.5f,
-  //                     0.0f, 1.0f,  0.0f, -0.5f, -0.5f, 0.0f, 0.0f,
+  //                     0.0f, 1.0f,  0.0f, -0.5f, -0.5f, 0.0      -0.5f,
+  //                     0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
+  // f, 0.0f,
   //                     1.0f, -1.0f, 0.5f, 0.0f,  0.0f,  0.0f};
   float vertices[] = {
       //  Position   Color            Texcoords
-      -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
-      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
-      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
-      -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
+      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // Top-right
+      -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Top-left
+      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // Bottom-right
+      -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
   };
 
-  GLuint elements[] = {0, 1, 2, 2, 3, 0};
+  GLuint elements[] = {3, 2, 1, 2, 1, 0};
 
   GLuint vao;
   glGenVertexArrays(1, &vao);
@@ -121,9 +123,9 @@ int main() {
 
   int width, height;
   unsigned char *image =
-      // SOIL_load_image("res/spinner.png", &width, &height, 0, SOIL_LOAD_RGBA);
-      SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGBA);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA,
+      SOIL_load_image("res/spinner.png", &width, &height, 0, SOIL_LOAD_RGBA);
+  // SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGBA);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
                GL_UNSIGNED_BYTE, image);
   // for (int i = 0; i <= 300; i++) {
   //   std::cout << image[i];
@@ -136,6 +138,7 @@ int main() {
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glGenerateMipmap(GL_TEXTURE_2D);
   // auto timer = new utils::Timer();
 
   while (!glfwWindowShouldClose(window)) {
