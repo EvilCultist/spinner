@@ -48,27 +48,23 @@ std::string utils::readFile(const std::string &filePath) {
   return buffer;
 }
 
-void utils::getImage(std::string filePath) {
+void utils::getImage(std::string filePath, GLenum tex, GLint loc) {
+  glActiveTexture(tex);
+  glBindTexture(GL_TEXTURE_2D, loc);
   int width, height;
-  // unsigned char *image = {};
-  // return image;
   unsigned char *image =
       SOIL_load_image(filePath.c_str(), &width, &height, 0, SOIL_LOAD_RGB);
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
                GL_UNSIGNED_BYTE, image);
   // settings functions
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  // GLfloat textureBackground[] = {1.0f, 1.0f, 1.0f, 0.0f};
-  // glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR,
-  // textureBackground);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  GLfloat textureBackground[] = {1.0f, 1.0f, 1.0f, 1.0f};
+  glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, textureBackground);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // GLfloat pixels[] = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-  //                     0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);
   // import texture before this
   glGenerateMipmap(GL_TEXTURE_2D);
   SOIL_free_image_data(image);

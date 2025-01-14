@@ -37,10 +37,10 @@ int main() {
   //                     1.0f, -1.0f, 0.5f, 0.0f,  0.0f,  0.0f};
   float vertices[] = {
       //  Position   Color            Texcoords
-      0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // Top-right
-      -0.5f, 0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Top-left
-      0.5f,  -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // Bottom-right
-      -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
+      0.8f,  0.8f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // Top-right
+      -0.8f, 0.8f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Top-left
+      0.8f,  -0.8f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // Bottom-right
+      -0.8f, -0.8f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
   };
 
   GLuint elements[] = {3, 2, 1, 2, 1, 0};
@@ -113,32 +113,39 @@ int main() {
   glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                         (void *)(5 * sizeof(float)));
 
-  GLuint tex;
-  glGenTextures(1, &tex);
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, tex);
+  // GLuint tex;
+  // glGenTextures(1, &tex);
+  // glActiveTexture(GL_TEXTURE0);
+  // glBindTexture(GL_TEXTURE_2D, tex);
 
+  GLuint tex[3];
+  glGenTextures(3, tex);
+  // glBindTexture(GL_TEXTURE_2D, tex);
   // auto image = utils::getImage("res/spinner.png");
-  // utils::getImage("res/spinner.png");
+  utils::getImage("res/spinner.png", GL_TEXTURE0, tex[0]);
+  utils::getImage("res/mask.png", GL_TEXTURE1, tex[1]);
+  utils::getImage("res/glass.png", GL_TEXTURE2, tex[2]);
 
-  int width, height;
-  unsigned char *image =
-      SOIL_load_image("res/spinner.png", &width, &height, 0, SOIL_LOAD_RGBA);
-  // SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGBA);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-               GL_UNSIGNED_BYTE, image);
-  // for (int i = 0; i <= 300; i++) {
-  //   std::cout << image[i];
-  // }
-  // std::cout << std::endl;
-  SOIL_free_image_data(image);
-  glUniform1i(glGetUniformLocation(shaderProgram, "tex"), 0);
+  // int width, height;
+  // unsigned char *image =
+  //     SOIL_load_image("res/spinner.png", &width, &height, 0, SOIL_LOAD_RGBA);
+  // // SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGBA);
+  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
+  //              GL_UNSIGNED_BYTE, image);
+  // // for (int i = 0; i <= 300; i++) {
+  // //   std::cout << image[i];
+  // // }
+  // // std::cout << std::endl;
+  // SOIL_free_image_data(image);
+  glUniform1i(glGetUniformLocation(shaderProgram, "texSpinner"), 0);
+  glUniform1i(glGetUniformLocation(shaderProgram, "texMask"), 1);
+  glUniform1i(glGetUniformLocation(shaderProgram, "texGlass"), 2);
 
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glGenerateMipmap(GL_TEXTURE_2D);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  // glGenerateMipmap(GL_TEXTURE_2D);
   // auto timer = new utils::Timer();
 
   while (!glfwWindowShouldClose(window)) {
@@ -149,7 +156,6 @@ int main() {
 
     // float time = timer->now();
     // glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
-    glBindTexture(GL_TEXTURE_2D, tex);
 
     glUseProgram(shaderProgram);
 
@@ -165,7 +171,7 @@ int main() {
     }
   }
 
-  glDeleteTextures(1, &tex);
+  glDeleteTextures(3, tex);
 
   glDeleteProgram(shaderProgram);
   glDeleteProgram(fragmentShader);
