@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <ios>
 #define GLFW_DLL
+#include "shaders.h"
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
 #include <cmath>
@@ -47,7 +48,7 @@ int main() {
       -0.5f, 1.0f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
   };
 
-  GLuint elements[] = {3, 2, 1, 2, 1, 0, 5, 4, 0, 4, 0, 1};
+  GLuint elements[] = {3, 2, 1, 2, 1, 0, 5, 4, 1, 4, 0, 1};
 
   GLuint vao;
   glGenVertexArrays(1, &vao);
@@ -64,36 +65,10 @@ int main() {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements,
                GL_STATIC_DRAW);
 
-  std::string vertexSourceString = utils::readFile("src/shaders/triangle.vert");
-  const char *vertexSource = vertexSourceString.c_str();
-  GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  glShaderSource(vertexShader, 1, &vertexSource, NULL);
-  glCompileShader(vertexShader);
-  GLint status;
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &status);
-  if (status != GL_TRUE) {
-    char buffer[512];
-    glGetShaderInfoLog(vertexShader, 512, NULL, buffer);
-    std::cout << buffer << std::endl;
-    std::cerr << "vertex shader failed to compile" << std::endl;
-    return -1;
-  }
-
-  std::string fragmentSourceString =
-      utils::readFile("src/shaders/triangle.frag");
-  // std::cout << fragmentSourceString << std::endl;
-  const char *fragmentSource = fragmentSourceString.c_str();
-  GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
-  glCompileShader(fragmentShader);
-  glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &status);
-  if (status != GL_TRUE) {
-    char buffer[512];
-    glGetShaderInfoLog(fragmentShader, 512, NULL, buffer);
-    std::cout << buffer << std::endl;
-    std::cerr << "fragment shader failed to compile" << std::endl;
-    return -1;
-  }
+  auto vertexShader =
+      shaders::makeShader("src/shaders/triangle.vert", GL_VERTEX_SHADER);
+  auto fragmentShader =
+      shaders::makeShader("src/shaders/triangle.frag", GL_FRAGMENT_SHADER);
 
   GLuint shaderProgram = glCreateProgram();
   glAttachShader(shaderProgram, vertexShader);
@@ -117,6 +92,33 @@ int main() {
   glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                         (void *)(5 * sizeof(float)));
 
+  auto vertexShaderRefl =
+      shaders::makeShader("src/shaders/refl.vert", GL_VERTEX_SHADER);
+  auto fragmentShaderRefl =
+      shaders::makeShader("src/shaders/refl.frag", GL_FRAGMENT_SHADER);
+
+  GLuint shaderProgramRefl = glCreateProgram();
+  glAttachShader(shaderProgramRefl, vertexShaderRefl);
+  glAttachShader(shaderProgramRefl, fragmentShaderRefl);
+
+  glBindFragDataLocation(shaderProgramRefl, 0, "outColor");
+  glLinkProgram(shaderProgramRefl);
+  glUseProgram(shaderProgramRefl);
+
+  posAttrib = glGetAttribLocation(shaderProgramRefl, "position");
+  glEnableVertexAttribArray(posAttrib);
+  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
+
+  colAttrib = glGetAttribLocation(shaderProgramRefl, "color");
+  glEnableVertexAttribArray(colAttrib);
+  glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+                        (void *)(2 * sizeof(float)));
+
+  texAttrib = glGetAttribLocation(shaderProgramRefl, "texCord");
+  glEnableVertexAttribArray(texAttrib);
+  glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+                        (void *)(5 * sizeof(float)));
+
   GLuint tex[3];
   glGenTextures(3, tex);
   // glBindTexture(GL_TEXTURE_2D, tex);
@@ -128,27 +130,35 @@ int main() {
   glUniform1i(glGetUniformLocation(shaderProgram, "texSpinner"), 0);
   glUniform1i(glGetUniformLocation(shaderProgram, "texMask"), 1);
   glUniform1i(glGetUniformLocation(shaderProgram, "texGlass"), 2);
+  glUniform1i(glGetUniformLocation(shaderProgramRefl, "texSpinner"), 0);
+  glUniform1i(glGetUniformLocation(shaderProgramRefl, "texMask"), 1);
+  glUniform1i(glGetUniformLocation(shaderProgramRefl, "texGlass"), 2);
 
   auto timer = new utils::Timer();
+  long double time;
 
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-
-    GLint uniTime = glGetUniformLocation(shaderProgram, "time");
-
-    long double time = (timer->now(1) / 10000.0);
+    time = (timer->now(1) / 10000.0);
     // std::cout << time << std::endl;
     // glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
-    glUniform1f(uniTime, time);
-
     glUseProgram(shaderProgram);
+
+    GLint uniTime = glGetUniformLocation(shaderProgram, "time");
+    glUniform1f(uniTime, time);
 
     glBindVertexArray(vao);
 
     // glDrawArrays(GL_TRIANGLES, 0, 3);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, &elements[0] + 6);
+    glUseProgram(shaderProgramRefl);
+
+    GLint uniTimeRef = glGetUniformLocation(shaderProgramRefl, "time");
+    glUniform1f(uniTimeRef, time);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
+                   (void *)(sizeof(GLuint) * 6));
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -156,6 +166,8 @@ int main() {
       glfwSetWindowShouldClose(window, GL_TRUE);
     }
   }
+
+  // std::cout << time << std::endl;
 
   glDeleteTextures(3, tex);
 

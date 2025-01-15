@@ -16,6 +16,7 @@ target_sources(spinner
     PUBLIC
     src/main.cpp
     src/utils.cpp
+    src/shaders/shaders.cpp
 )
 
 target_include_directories(spinner
