@@ -1,6 +1,5 @@
 #pragma once
 #include <chrono>
-#include <cstdint>
 #include <string>
 #define GLFW_DLL
 #include <GL/glew.h>

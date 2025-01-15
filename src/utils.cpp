@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <fstream>
+// #include <stdexcept>
 
 utils::Timer::Timer() { auto start = std::chrono::system_clock::now(); }
 // has some issue, returns a constant
@@ -85,11 +86,13 @@ void utils::getImage(std::string filePath, GLenum tex, GLint loc) {
 //   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 //   GLfloat textureBackground[] = {1.0f, 0.5f, 1.0f, 0.0f};
 //   glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR,
-//   textureBackground); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-//   GL_NEAREST); glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-//   GL_LINEAR); GLfloat pixels[] = {0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+//   textureBackground); glTexParameteri(GL_TEXTURE_2D,
+//   GL_TEXTURE_MIN_FILTER, GL_NEAREST); glTexParameteri(GL_TEXTURE_2D,
+//   GL_TEXTURE_MAG_FILTER, GL_LINEAR); GLfloat pixels[] = {0.0f, 0.0f,
+//   0.0f, 1.0f, 1.0f, 1.0f,
 //                       0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f};
-//   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);
+//   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT,
+//   pixels);
 //   // import texture before this
 //   glGenerateMipmap(GL_TEXTURE_2D);
 //   removeImage(image);

@@ -12,12 +12,13 @@ uniform sampler2D texSpinner;
 uniform sampler2D texGlass;
 
 void main() {
+    float factor1 = sin(time * PI);
+    float factor2 = ((sin(5 + time * 2 * PI) + 1.0) / 2.0);
+    float factor3 = ((sin(1.5 + time * 4 * PI) + 1.0) / 2.0);
     // outColor = texture(tex, TexCord) * vec4(Color, 1.0);
     vec4 mask = texture(texMask, TexCord) * vec4(Color, 1.0);
     vec4 spinner = texture(texSpinner, TexCord);
     vec4 glass = texture(texGlass, TexCord);
-    float factor1 = sin(time * PI);
-    float factor2 = ((sin(time * 2 * PI) + 1.0) / 2.0);
     // out1 = mix(glass, mask, time * 1.0);
     vec4 out1 = mix(glass, mask, factor1);
     outColor = mix(out1, spinner, factor2);

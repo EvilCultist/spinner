@@ -16,6 +16,7 @@ target_sources(spinner
     PUBLIC
     src/main.cpp
     src/utils.cpp
+    src/shaders/shaders.cpp
 )
 
 target_include_directories(spinner
@@ -26,6 +27,7 @@ target_include_directories(spinner
 find_package(OpenGL REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(GLEW REQUIRED)
+find_package(glm REQUIRED)
 
 find_library(SOIL2 soil2-debug)
 # find_library(SOIL_LIBRARY soil-debug)
@@ -45,3 +47,4 @@ if(GLEW_FOUND)
 endif()
 
 target_link_libraries(spinner SOIL)
+target_link_libraries(spinner glm::glm)
