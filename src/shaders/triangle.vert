@@ -10,5 +10,5 @@ out vec2 TexCord;
 void main() {
     Color = color;
     TexCord = texCord;
-    gl_Position = vec4(-1 * position, 0.0, 1.0);
+    gl_Position = vec4(position, 0.0, 1.0);
 }

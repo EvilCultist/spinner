@@ -101,10 +101,6 @@ int main() {
   glAttachShader(shaderProgramRefl, vertexShaderRefl);
   glAttachShader(shaderProgramRefl, fragmentShaderRefl);
 
-  glBindFragDataLocation(shaderProgramRefl, 0, "outColor");
-  glLinkProgram(shaderProgramRefl);
-  glUseProgram(shaderProgramRefl);
-
   posAttrib = glGetAttribLocation(shaderProgramRefl, "position");
   glEnableVertexAttribArray(posAttrib);
   glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
@@ -119,6 +115,10 @@ int main() {
   glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                         (void *)(5 * sizeof(float)));
 
+  glBindFragDataLocation(shaderProgramRefl, 0, "outColor");
+  glLinkProgram(shaderProgramRefl);
+  glUseProgram(shaderProgramRefl);
+
   GLuint tex[3];
   glGenTextures(3, tex);
   // glBindTexture(GL_TEXTURE_2D, tex);
@@ -127,12 +127,15 @@ int main() {
   utils::getImage("res/mask.png", GL_TEXTURE1, tex[1]);
   utils::getImage("res/glass.png", GL_TEXTURE2, tex[2]);
 
-  glUniform1i(glGetUniformLocation(shaderProgram, "texSpinner"), 0);
-  glUniform1i(glGetUniformLocation(shaderProgram, "texMask"), 1);
-  glUniform1i(glGetUniformLocation(shaderProgram, "texGlass"), 2);
   glUniform1i(glGetUniformLocation(shaderProgramRefl, "texSpinner"), 0);
   glUniform1i(glGetUniformLocation(shaderProgramRefl, "texMask"), 1);
   glUniform1i(glGetUniformLocation(shaderProgramRefl, "texGlass"), 2);
+
+  glUseProgram(shaderProgram);
+
+  glUniform1i(glGetUniformLocation(shaderProgram, "texSpinner"), 0);
+  glUniform1i(glGetUniformLocation(shaderProgram, "texMask"), 1);
+  glUniform1i(glGetUniformLocation(shaderProgram, "texGlass"), 2);
 
   auto timer = new utils::Timer();
   long double time;
@@ -143,22 +146,23 @@ int main() {
     time = (timer->now(1) / 10000.0);
     // std::cout << time << std::endl;
     // glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
-    glUseProgram(shaderProgram);
-
     GLint uniTime = glGetUniformLocation(shaderProgram, "time");
     glUniform1f(uniTime, time);
+
+    glUseProgram(shaderProgram);
 
     glBindVertexArray(vao);
 
     // glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    glUseProgram(shaderProgramRefl);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
+                   (void *)(sizeof(GLuint) * 6));
 
     GLint uniTimeRef = glGetUniformLocation(shaderProgramRefl, "time");
     glUniform1f(uniTimeRef, time);
 
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
-                   (void *)(sizeof(GLuint) * 6));
+    glUseProgram(shaderProgramRefl);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
     glfwSwapBuffers(window);
     glfwPollEvents();

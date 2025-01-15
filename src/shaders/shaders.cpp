@@ -16,6 +16,9 @@ void shaders::checkShader(GLuint shader) {
 
 GLuint shaders::makeShader(std::string path, GLenum type) {
   std::string vertexSourceString = utils::readFile(path);
+  // std::cout << "\n---" << path << "---\n"
+  //           << vertexSourceString << "\n\t---\n"
+  //           << std::endl;
   const char *vertexSource = vertexSourceString.c_str();
   GLuint vertexShader = glCreateShader(type);
   glShaderSource(vertexShader, 1, &vertexSource, NULL);
