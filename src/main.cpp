@@ -1,5 +1,7 @@
 #include <GL/glew.h>
 #include <chrono>
+#include <climits>
+#include <cstdint>
 #include <ios>
 #define GLFW_DLL
 #include <GLFW/glfw3.h>
@@ -37,13 +39,15 @@ int main() {
   //                     1.0f, -1.0f, 0.5f, 0.0f,  0.0f,  0.0f};
   float vertices[] = {
       //  Position   Color            Texcoords
-      0.8f,  0.8f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // Top-right
-      -0.8f, 0.8f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Top-left
-      0.8f,  -0.8f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // Bottom-right
-      -0.8f, -0.8f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
+      0.5f,  0.0f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // Middle-right
+      -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Middle-left
+      0.5f,  -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // Top-right
+      -0.5f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // Top-left
+      0.5f,  1.0f,  0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // Bottom-right
+      -0.5f, 1.0f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
   };
 
-  GLuint elements[] = {3, 2, 1, 2, 1, 0};
+  GLuint elements[] = {3, 2, 1, 2, 1, 0, 5, 4, 0, 4, 0, 1};
 
   GLuint vao;
   glGenVertexArrays(1, &vao);
@@ -113,11 +117,6 @@ int main() {
   glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                         (void *)(5 * sizeof(float)));
 
-  // GLuint tex;
-  // glGenTextures(1, &tex);
-  // glActiveTexture(GL_TEXTURE0);
-  // glBindTexture(GL_TEXTURE_2D, tex);
-
   GLuint tex[3];
   glGenTextures(3, tex);
   // glBindTexture(GL_TEXTURE_2D, tex);
@@ -126,36 +125,22 @@ int main() {
   utils::getImage("res/mask.png", GL_TEXTURE1, tex[1]);
   utils::getImage("res/glass.png", GL_TEXTURE2, tex[2]);
 
-  // int width, height;
-  // unsigned char *image =
-  //     SOIL_load_image("res/spinner.png", &width, &height, 0, SOIL_LOAD_RGBA);
-  // // SOIL_load_image("sample.png", &width, &height, 0, SOIL_LOAD_RGBA);
-  // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,
-  //              GL_UNSIGNED_BYTE, image);
-  // // for (int i = 0; i <= 300; i++) {
-  // //   std::cout << image[i];
-  // // }
-  // // std::cout << std::endl;
-  // SOIL_free_image_data(image);
   glUniform1i(glGetUniformLocation(shaderProgram, "texSpinner"), 0);
   glUniform1i(glGetUniformLocation(shaderProgram, "texMask"), 1);
   glUniform1i(glGetUniformLocation(shaderProgram, "texGlass"), 2);
 
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  // glGenerateMipmap(GL_TEXTURE_2D);
-  // auto timer = new utils::Timer();
+  auto timer = new utils::Timer();
 
   while (!glfwWindowShouldClose(window)) {
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    // GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
+    GLint uniTime = glGetUniformLocation(shaderProgram, "time");
 
-    // float time = timer->now();
+    long double time = (timer->now(1) / 10000.0);
+    // std::cout << time << std::endl;
     // glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
+    glUniform1f(uniTime, time);
 
     glUseProgram(shaderProgram);
 
@@ -163,6 +148,7 @@ int main() {
 
     // glDrawArrays(GL_TRIANGLES, 0, 3);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, &elements[0] + 6);
 
     glfwSwapBuffers(window);
     glfwPollEvents();
@@ -181,8 +167,6 @@ int main() {
   glDeleteBuffers(1, &vbo);
 
   glDeleteVertexArrays(1, &vao);
-
-  // utils::removeImage(image);
 
   // std::this_thread::sleep_for(std::chrono::seconds(10));
 

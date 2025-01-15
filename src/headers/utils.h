@@ -1,5 +1,6 @@
 #pragma once
 #include <chrono>
+#include <cstdint>
 #include <string>
 #define GLFW_DLL
 #include <GL/glew.h>
@@ -9,7 +10,7 @@ namespace utils {
 class Timer {
 public:
   Timer();
-  float now();
+  uint64_t now(uint64_t speed);
 
 private:
   std::chrono::time_point<std::chrono::high_resolution_clock> start;

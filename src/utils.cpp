@@ -4,16 +4,18 @@
 #include <SOIL/SOIL.h>
 #include <chrono>
 #include <cstddef>
+#include <cstdint>
 #include <fstream>
 
-utils::Timer::Timer() {
-  auto start = std::chrono::high_resolution_clock::now();
-}
+utils::Timer::Timer() { auto start = std::chrono::system_clock::now(); }
 // has some issue, returns a constant
-float utils::Timer::now() {
-  auto end = std::chrono::high_resolution_clock::now();
-  return std::chrono::duration_cast<std::chrono::duration<float>>(end - start)
-      .count();
+uint64_t utils::Timer::now(uint64_t speed) {
+  // auto end = std::chrono::system_clock::now();
+  // return (end - start) / std::chrono::milliseconds(1);
+  return (std::chrono::high_resolution_clock::now().time_since_epoch() /
+          std::chrono::milliseconds(speed) % 10000);
+  // return std::chrono::duration_cast<std::chrono::duration<float>>(end -
+  // start) .count();
 }
 
 void utils::glfwHints() {
