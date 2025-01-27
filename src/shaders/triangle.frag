@@ -11,10 +11,20 @@ uniform sampler2D texMask;
 uniform sampler2D texSpinner;
 uniform sampler2D texGlass;
 
+vec4 transparent = vec4(
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f
+    );
+
 void main() {
     float factor1 = sin(time * PI);
     float factor2 = ((sin(5 + time * 2 * PI) + 1.0) / 2.0);
-    float factor3 = ((sin(1.5 + time * 4 * PI) + 1.0) / 2.0);
+    if (TexCord.x > 0.99 || (TexCord.x < 0.01) || TexCord.y > 0.99 || (TexCord.y < 0.01)) {
+        outColor = transparent;
+        return;
+    }
     // outColor = texture(tex, TexCord) * vec4(Color, 1.0);
     vec4 mask = texture(texMask, TexCord) * vec4(Color, 1.0);
     vec4 spinner = texture(texSpinner, TexCord);

@@ -10,6 +10,8 @@
 #include <cmath>
 #include <utils.h>
 
+// TODO : make this one shader
+
 // #define WINDOW_HEIGHT 1200
 #define WINDOW_HEIGHT 1200
 // #define WINDOW_WIDTH 2200
@@ -40,12 +42,12 @@ int main() {
   //                     1.0f, -1.0f, 0.5f, 0.0f,  0.0f,  0.0f};
   float vertices[] = {
       //  Position   Color            Texcoords
-      0.5f,  0.0f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // Middle-right
-      -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f, // Middle-left
-      0.5f,  -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // Top-right
-      -0.5f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // Top-left
-      0.5f,  1.0f,  0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // Bottom-right
-      -0.5f, 1.0f,  1.0f, 1.0f, 1.0f, 0.0f, 0.0f  // Bottom-left
+      0.5f,  0.0f,  0.0f, 1.0f, 0.0f, 2.0f,  1.0f,  // Middle-right
+      -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, -1.0f, 1.0f,  // Middle-left
+      0.5f,  -1.0f, 0.0f, 0.0f, 1.0f, 2.0f,  -1.0f, // Top-right
+      -0.5f, -1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f, // Top-left
+      0.5f,  1.0f,  0.0f, 0.0f, 1.0f, 2.0f,  -1.0f, // Bottom-right
+      -0.5f, 1.0f,  1.0f, 1.0f, 1.0f, -1.0f, -1.0f  // Bottom-left
   };
 
   GLuint elements[] = {3, 2, 1, 2, 1, 0, 5, 4, 1, 4, 0, 1};

@@ -29,7 +29,7 @@ void main() {
     // newx -= floor(newx);
     newx = newx / (mix(5, 20, factor3));
     newx += TexCord.x;
-    if (newx > 1 || (newx < 0)) {
+    if (newx > 0.99 || (newx < 0.01) || TexCord.y > 0.99 || (TexCord.y < 0.01)) {
         outColor = transparent;
         return;
     }
