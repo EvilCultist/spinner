@@ -40,17 +40,27 @@ int main() {
   //                     0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
   // f, 0.0f,
   //                     1.0f, -1.0f, 0.5f, 0.0f,  0.0f,  0.0f};
+  // float vertices[] = {
+  //     //  Position   Color            Texcoords
+  //     0.5f,  0.0f,  0.0f, 1.0f, 0.0f, 2.0f,  1.0f,  // Middle-right
+  //     -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, -1.0f, 1.0f,  // Middle-left
+  //     0.5f,  -1.0f, 0.0f, 0.0f, 1.0f, 2.0f,  -1.0f, // Top-right
+  //     -0.5f, -1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f, // Top-left
+  //     0.5f,  1.0f,  0.0f, 1.0f, 1.0f, 2.0f,  -1.0f, // Bottom-right
+  //     -0.5f, 1.0f,  1.0f, 1.0f, 0.0f, -1.0f, -1.0f  // Bottom-left
+  // };
   float vertices[] = {
       //  Position   Color            Texcoords
-      0.5f,  0.0f,  0.0f, 1.0f, 0.0f, 2.0f,  1.0f,  // Middle-right
-      -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, -1.0f, 1.0f,  // Middle-left
-      0.5f,  -1.0f, 0.0f, 0.0f, 1.0f, 2.0f,  -1.0f, // Top-right
-      -0.5f, -1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f, // Top-left
-      0.5f,  1.0f,  0.0f, 1.0f, 1.0f, 2.0f,  -1.0f, // Bottom-right
-      -0.5f, 1.0f,  1.0f, 1.0f, 0.0f, -1.0f, -1.0f  // Bottom-left
+      0.5f,  0.0f,  0.0f, 1.0f, 0.0f, 1.0f,  0.0f, // 0 Middle-right
+      -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, -1.0f, 0.0f, // 1 Middle-left
+      1.0f,  -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,  0.0f, // 2 Bottom-right
+      -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f,  0.0f, // 3 Bottom-left
+      1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 1.0f,  1.0f, // 4 Top-right
+      -1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.0f,  1.0f  // 5 Top-left
   };
 
-  GLuint elements[] = {3, 2, 1, 2, 1, 0, 5, 4, 1, 4, 0, 1};
+  // GLuint elements[] = {3, 2, 1, 2, 1, 0, 5, 4, 1, 4, 0, 1};
+  GLuint elements[] = {2, 3, 4, 3, 4, 5};
 
   GLuint vao;
   glGenVertexArrays(1, &vao);
@@ -127,6 +137,10 @@ int main() {
   glAttachShader(shaderProg, vertexShader);
   glAttachShader(shaderProg, fragmentShader);
 
+  glBindFragDataLocation(shaderProg, 0, "outColor");
+  glLinkProgram(shaderProg);
+  glUseProgram(shaderProg);
+
   GLuint posAttrib = glGetAttribLocation(shaderProg, "position");
   glEnableVertexAttribArray(posAttrib);
   glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
@@ -141,12 +155,8 @@ int main() {
   glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                         (void *)(5 * sizeof(float)));
 
-  glBindFragDataLocation(shaderProg, 0, "outColor");
-  glLinkProgram(shaderProg);
-  glUseProgram(shaderProg);
-
   GLuint tex[3];
-  glGenTextures(3, tex);
+  glGenTextures(3, &tex[0]);
   // glBindTexture(GL_TEXTURE_2D, tex);
   // auto image = utils::getImage("res/spinner.png");
   utils::getImage("res/spinner.png", GL_TEXTURE0, tex[0]);
@@ -180,8 +190,8 @@ int main() {
     glBindVertexArray(vao);
 
     // glDrawArrays(GL_TRIANGLES, 0, 3);
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
-                   (void *)(sizeof(GLuint) * 6));
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
+    // (void *)(sizeof(GLuint) * 6));
 
     // GLint uniTimeRef = glGetUniformLocation(shaderProgramRefl, "time");
     // glUniform1f(uniTimeRef, time);
