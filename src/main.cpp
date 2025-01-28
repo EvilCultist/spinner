@@ -46,8 +46,8 @@ int main() {
       -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, -1.0f, 1.0f,  // Middle-left
       0.5f,  -1.0f, 0.0f, 0.0f, 1.0f, 2.0f,  -1.0f, // Top-right
       -0.5f, -1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f, // Top-left
-      0.5f,  1.0f,  0.0f, 0.0f, 1.0f, 2.0f,  -1.0f, // Bottom-right
-      -0.5f, 1.0f,  1.0f, 1.0f, 1.0f, -1.0f, -1.0f  // Bottom-left
+      0.5f,  1.0f,  0.0f, 1.0f, 1.0f, 2.0f,  -1.0f, // Bottom-right
+      -0.5f, 1.0f,  1.0f, 1.0f, 0.0f, -1.0f, -1.0f  // Bottom-left
   };
 
   GLuint elements[] = {3, 2, 1, 2, 1, 0, 5, 4, 1, 4, 0, 1};
@@ -67,59 +67,83 @@ int main() {
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements,
                GL_STATIC_DRAW);
 
+  // auto vertexShader =
+  //     shaders::makeShader("src/shaders/triangle.vert", GL_VERTEX_SHADER);
+  // auto fragmentShader =
+  //     shaders::makeShader("src/shaders/triangle.frag", GL_FRAGMENT_SHADER);
+
+  // GLuint shaderProgram = glCreateProgram();
+  // glAttachShader(shaderProgram, vertexShader);
+  // glAttachShader(shaderProgram, fragmentShader);
+
+  // glBindFragDataLocation(shaderProgram, 0, "outColor");
+  // glLinkProgram(shaderProgram);
+  // glUseProgram(shaderProgram);
+
+  // GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+  // glEnableVertexAttribArray(posAttrib);
+  // glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+  // 0);
+
+  // GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
+  // glEnableVertexAttribArray(colAttrib);
+  // glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+  //                       (void *)(2 * sizeof(float)));
+
+  // GLint texAttrib = glGetAttribLocation(shaderProgram, "texCord");
+  // glEnableVertexAttribArray(texAttrib);
+  // glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+  //                       (void *)(5 * sizeof(float)));
+
+  // auto vertexShaderRefl =
+  //     shaders::makeShader("src/shaders/refl.vert", GL_VERTEX_SHADER);
+  // auto fragmentShaderRefl =
+  //     shaders::makeShader("src/shaders/refl.frag", GL_FRAGMENT_SHADER);
+
+  // GLuint shaderProgramRefl = glCreateProgram();
+  // glAttachShader(shaderProgramRefl, vertexShaderRefl);
+  // glAttachShader(shaderProgramRefl, fragmentShaderRefl);
+
+  // posAttrib = glGetAttribLocation(shaderProgramRefl, "position");
+  // glEnableVertexAttribArray(posAttrib);
+  // glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+  // 0);
+
+  // colAttrib = glGetAttribLocation(shaderProgramRefl, "color");
+  // glEnableVertexAttribArray(colAttrib);
+  // glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+  //                       (void *)(2 * sizeof(float)));
+
+  // texAttrib = glGetAttribLocation(shaderProgramRefl, "texCord");
+  // glEnableVertexAttribArray(texAttrib);
+  // glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
+  //                       (void *)(5 * sizeof(float)));
   auto vertexShader =
-      shaders::makeShader("src/shaders/triangle.vert", GL_VERTEX_SHADER);
+      shaders::makeShader("src/shaders/aio.vert", GL_VERTEX_SHADER);
   auto fragmentShader =
-      shaders::makeShader("src/shaders/triangle.frag", GL_FRAGMENT_SHADER);
+      shaders::makeShader("src/shaders/aio.frag", GL_FRAGMENT_SHADER);
 
-  GLuint shaderProgram = glCreateProgram();
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
+  GLuint shaderProg = glCreateProgram();
+  glAttachShader(shaderProg, vertexShader);
+  glAttachShader(shaderProg, fragmentShader);
 
-  glBindFragDataLocation(shaderProgram, 0, "outColor");
-  glLinkProgram(shaderProgram);
-  glUseProgram(shaderProgram);
-
-  GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
+  GLuint posAttrib = glGetAttribLocation(shaderProg, "position");
   glEnableVertexAttribArray(posAttrib);
   glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
 
-  GLint colAttrib = glGetAttribLocation(shaderProgram, "color");
+  GLuint colAttrib = glGetAttribLocation(shaderProg, "color");
   glEnableVertexAttribArray(colAttrib);
   glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                         (void *)(2 * sizeof(float)));
 
-  GLint texAttrib = glGetAttribLocation(shaderProgram, "texCord");
+  GLuint texAttrib = glGetAttribLocation(shaderProg, "texCord");
   glEnableVertexAttribArray(texAttrib);
   glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
                         (void *)(5 * sizeof(float)));
 
-  auto vertexShaderRefl =
-      shaders::makeShader("src/shaders/refl.vert", GL_VERTEX_SHADER);
-  auto fragmentShaderRefl =
-      shaders::makeShader("src/shaders/refl.frag", GL_FRAGMENT_SHADER);
-
-  GLuint shaderProgramRefl = glCreateProgram();
-  glAttachShader(shaderProgramRefl, vertexShaderRefl);
-  glAttachShader(shaderProgramRefl, fragmentShaderRefl);
-
-  posAttrib = glGetAttribLocation(shaderProgramRefl, "position");
-  glEnableVertexAttribArray(posAttrib);
-  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
-
-  colAttrib = glGetAttribLocation(shaderProgramRefl, "color");
-  glEnableVertexAttribArray(colAttrib);
-  glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
-                        (void *)(2 * sizeof(float)));
-
-  texAttrib = glGetAttribLocation(shaderProgramRefl, "texCord");
-  glEnableVertexAttribArray(texAttrib);
-  glVertexAttribPointer(texAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float),
-                        (void *)(5 * sizeof(float)));
-
-  glBindFragDataLocation(shaderProgramRefl, 0, "outColor");
-  glLinkProgram(shaderProgramRefl);
-  glUseProgram(shaderProgramRefl);
+  glBindFragDataLocation(shaderProg, 0, "outColor");
+  glLinkProgram(shaderProg);
+  glUseProgram(shaderProg);
 
   GLuint tex[3];
   glGenTextures(3, tex);
@@ -129,15 +153,15 @@ int main() {
   utils::getImage("res/mask.png", GL_TEXTURE1, tex[1]);
   utils::getImage("res/glass.png", GL_TEXTURE2, tex[2]);
 
-  glUniform1i(glGetUniformLocation(shaderProgramRefl, "texSpinner"), 0);
-  glUniform1i(glGetUniformLocation(shaderProgramRefl, "texMask"), 1);
-  glUniform1i(glGetUniformLocation(shaderProgramRefl, "texGlass"), 2);
+  glUniform1i(glGetUniformLocation(shaderProg, "texSpinner"), 0);
+  glUniform1i(glGetUniformLocation(shaderProg, "texMask"), 1);
+  glUniform1i(glGetUniformLocation(shaderProg, "texGlass"), 2);
 
-  glUseProgram(shaderProgram);
+  // glUseProgram(shaderProgram);
 
-  glUniform1i(glGetUniformLocation(shaderProgram, "texSpinner"), 0);
-  glUniform1i(glGetUniformLocation(shaderProgram, "texMask"), 1);
-  glUniform1i(glGetUniformLocation(shaderProgram, "texGlass"), 2);
+  // glUniform1i(glGetUniformLocation(shaderProgram, "texSpinner"), 0);
+  // glUniform1i(glGetUniformLocation(shaderProgram, "texMask"), 1);
+  // glUniform1i(glGetUniformLocation(shaderProgram, "texGlass"), 2);
 
   auto timer = new utils::Timer();
   long double time;
@@ -148,10 +172,10 @@ int main() {
     time = (timer->now(1) / 10000.0);
     // std::cout << time << std::endl;
     // glUniform3f(uniColor, (sin(time * 4.0f) + 1.0f) / 2.0f, 0.0f, 0.0f);
-    GLint uniTime = glGetUniformLocation(shaderProgram, "time");
+    GLint uniTime = glGetUniformLocation(shaderProg, "time");
     glUniform1f(uniTime, time);
 
-    glUseProgram(shaderProgram);
+    glUseProgram(shaderProg);
 
     glBindVertexArray(vao);
 
@@ -159,10 +183,10 @@ int main() {
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT,
                    (void *)(sizeof(GLuint) * 6));
 
-    GLint uniTimeRef = glGetUniformLocation(shaderProgramRefl, "time");
-    glUniform1f(uniTimeRef, time);
+    // GLint uniTimeRef = glGetUniformLocation(shaderProgramRefl, "time");
+    // glUniform1f(uniTimeRef, time);
 
-    glUseProgram(shaderProgramRefl);
+    // glUseProgram(shaderProgramRefl);
 
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
@@ -177,7 +201,7 @@ int main() {
 
   glDeleteTextures(3, tex);
 
-  glDeleteProgram(shaderProgram);
+  glDeleteProgram(shaderProg);
   glDeleteProgram(fragmentShader);
   glDeleteProgram(vertexShader);
 
