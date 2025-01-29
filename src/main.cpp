@@ -2,15 +2,18 @@
 #include <chrono>
 #include <climits>
 #include <cstdint>
+#include <glm/ext/vector_float3.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <ios>
 #define GLFW_DLL
 #include "shaders.h"
 #include <GLFW/glfw3.h>
 #include <SOIL/SOIL.h>
 #include <cmath>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <utils.h>
-
-// TODO : make this one shader
 
 // #define WINDOW_HEIGHT 1200
 #define WINDOW_HEIGHT 1200
@@ -37,10 +40,10 @@ int main() {
 
   float vertices[] = {
       //  Position   Color            Texcoords
-      1.0f,  -1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, // 2 Bottom-right
-      -1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, // 3 Bottom-left
-      1.0f,  1.0f,  0.0f, 1.0f, 0.0f, 1.0f, 1.0f, // 4 Top-right
-      -1.0f, 1.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f  // 5 Top-left
+      1.0f,  -1.0f, // 2 Bottom-right
+      -1.0f, -1.0f, // 3 Bottom-left
+      1.0f,  1.0f,  // 4 Top-right
+      -1.0f, 1.0f,  // 5 Top-left
   };
 
   GLuint elements[] = {0, 1, 2, 1, 2, 3};
@@ -75,15 +78,21 @@ int main() {
 
   GLuint posAttrib = glGetAttribLocation(shaderProg, "position");
   glEnableVertexAttribArray(posAttrib);
-  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
+  glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0);
 
   GLuint tex;
   glGenTextures(1, &tex);
 
   utils::getImage("res/spinner.png", GL_TEXTURE0, tex);
-
   glUniform1i(glGetUniformLocation(shaderProg, "texSpinner"), 0);
 
+  glm::mat4 trans = glm::mat4(1.0f);
+  trans = glm::rotate(trans, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+
+  GLint uniTrans = glGetUniformLocation(shaderProg, "trans");
+  glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
+
+  GLint uniTime = glGetUniformLocation(shaderProg, "time");
   auto timer = new utils::Timer();
   long double time;
 
@@ -93,8 +102,13 @@ int main() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     time = (timer->now(1) / 10000.0);
-    GLint uniTime = glGetUniformLocation(shaderProg, "time");
     glUniform1f(uniTime, time);
+
+    if (((long long int)(time * 100000) % 10) == 0) {
+      trans =
+          glm::rotate(trans, glm::radians(000.1f), glm::vec3(0.0f, 0.0f, 1.0f));
+      glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
+    }
 
     glUseProgram(shaderProg);
 
