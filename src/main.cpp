@@ -7,6 +7,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/trigonometric.hpp>
 #include <ios>
 #define GLFW_DLL
 #include "shaders.h"
@@ -22,6 +23,9 @@
 #define WINDOW_HEIGHT 1200
 // #define WINDOW_WIDTH 2200
 #define WINDOW_WIDTH 1200
+
+#define acceler 0.01f  // degrees per frame per frame
+#define deaccel 0.005f // degrees per frame per frame
 
 int main() {
   if (!glfwInit())
@@ -119,6 +123,7 @@ int main() {
   GLint uniTime = glGetUniformLocation(shaderProg, "time");
   auto timer = new utils::Timer();
   long double time;
+  float velocity = 0.0f;
 
   while (!glfwWindowShouldClose(window)) {
 
@@ -128,11 +133,16 @@ int main() {
     time = (timer->now(1) / 10000.0);
     glUniform1f(uniTime, time);
 
-    if (((long long int)(time * 100000) % 10) == 0) {
-      trans =
-          glm::rotate(trans, glm::radians(000.1f), glm::vec3(0.0f, 0.0f, 1.0f));
-      glUniformMatrix4fv(uniRot, 1, GL_FALSE, glm::value_ptr(trans));
-    }
+    // if (((long long int)(time * 100000) % 10) == 0) {
+    //   trans =
+    //       glm::rotate(trans, glm::radians(000.1f), glm::vec3(0.0f,
+    //       0.0f, 1.0f));
+    //   glUniformMatrix4fv(uniRot, 1, GL_FALSE, glm::value_ptr(trans));
+    // }
+
+    trans =
+        glm::rotate(trans, glm::radians(velocity), glm::vec3(0.0f, 0.0f, 1.0f));
+    glUniformMatrix4fv(uniRot, 1, GL_FALSE, glm::value_ptr(trans));
 
     glUseProgram(shaderProg);
 
@@ -144,6 +154,17 @@ int main() {
     glfwPollEvents();
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
       glfwSetWindowShouldClose(window, GL_TRUE);
+    }
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+      velocity += acceler;
+      if (velocity > 180.0f) {
+        velocity = 180.0f;
+      }
+    } else {
+      velocity -= deaccel;
+      if (velocity < 0) {
+        velocity = 0;
+      }
     }
   }
 
