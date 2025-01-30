@@ -2,6 +2,9 @@
 #include <chrono>
 #include <climits>
 #include <cstdint>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_float4x4.hpp>
+#include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/vector_float3.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <ios>
@@ -89,8 +92,29 @@ int main() {
   glm::mat4 trans = glm::mat4(1.0f);
   trans = glm::rotate(trans, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-  GLint uniTrans = glGetUniformLocation(shaderProg, "trans");
-  glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
+  glm::mat4 model = glm::mat4(1.0f);
+
+  glm::mat4 view =
+      glm::lookAt(glm::vec3(0.0f, 2.0f, 1.0f),  // I am at
+                  glm::vec3(0.0f, 0.0f, 0.0f),  // point to be centered
+                  glm::vec3(0.0f, 0.0f, 1.0f)); // up axis
+
+  glm::mat4 proj =
+      glm::perspective(glm::radians(45.0f),                   // fov
+                       (WINDOW_WIDTH * 1.0f) / WINDOW_HEIGHT, // aspect ratio
+                       1.0f,                                  // near plane
+                       20.0f                                  // far plane
+      );
+
+  GLint uniModel = glGetUniformLocation(shaderProg, "model");
+  glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+  GLint uniView = glGetUniformLocation(shaderProg, "view");
+  glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
+  GLint uniProg = glGetUniformLocation(shaderProg, "projection");
+  glUniformMatrix4fv(uniProg, 1, GL_FALSE, glm::value_ptr(proj));
+
+  GLint uniRot = glGetUniformLocation(shaderProg, "rotation");
+  glUniformMatrix4fv(uniRot, 1, GL_FALSE, glm::value_ptr(trans));
 
   GLint uniTime = glGetUniformLocation(shaderProg, "time");
   auto timer = new utils::Timer();
@@ -107,7 +131,7 @@ int main() {
     if (((long long int)(time * 100000) % 10) == 0) {
       trans =
           glm::rotate(trans, glm::radians(000.1f), glm::vec3(0.0f, 0.0f, 1.0f));
-      glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
+      glUniformMatrix4fv(uniRot, 1, GL_FALSE, glm::value_ptr(trans));
     }
 
     glUseProgram(shaderProg);
